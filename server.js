@@ -9,6 +9,6 @@ app.use(bodyParser.json());
 
 app.get("/", (req, res) => res.send("This is a server, apparently."));
 
-app.get("*", (req, res) res.redirect("/"));
+app.get("*", (req, res) => res.redirect("/"));
 
 app.listen(port, () => console.log(`The doors are open on port: ${PORT}`));
