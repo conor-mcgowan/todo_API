@@ -1,4 +1,4 @@
-let mysql = require("mysql");
+let mysql = require("mysql2");
 const pool = mysql.createPool({
   connectionLimit: 10,
   host: process.env.DB_HOST,
@@ -8,4 +8,21 @@ const pool = mysql.createPool({
   port: process.env.DB_PORT,
 });
 
-module.exports = pool;
+pool.getConnection((err, connection) => {
+  if (err) {
+    if (err.code === "PROTOCOL_CONNECTION_LOST") {
+      console.error("Database connection was closed.");
+    }
+    if (err.code === "ER_CON_COUNT_ERROR") {
+      console.error("Database has too many connections.");
+    }
+    if (err.code === "ECONNREFUSED") {
+      console.error("Database connection was refused.");
+    }
+  }
+
+  if (connection) connection.release();
+  return;
+});
+
+module.exports = pool.promise();
